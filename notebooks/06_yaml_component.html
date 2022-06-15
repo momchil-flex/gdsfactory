@@ -1,0 +1,2986 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Reticle assembly" href="07_mask.html" /><link rel="prev" title="Routing electrical" href="041_routing_electical.html" />
+
+    <meta name="generator" content="sphinx-5.0.1, furo 2022.06.04.1"/>
+        <title>Netlist driven flow (circuits) - gdsfactory 5.10.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">gdsfactory 5.10.3 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">gdsfactory 5.10.3 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../README.html">gdsfactory 5.10.3</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../git.html">Intro Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="_0_python.html">Python intro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_1_git.html">Git: Version control intro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_2_install.html">Install gdsfactory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_2_klayout.html">Klayout integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_3_vscode.html">VScode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_4_gdsfactory_in_5minutes.html">gdsfactory in 5 minutes</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../notebooks.html">Layout Tutorial</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00_geometry.html">Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01_references.html">References and ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_movement.html">Movement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_cells_autoname_and_cache.html">Cell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_layer_stack.html">Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_waveguides_paths_crossections.html">Path and CrossSection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_components_.html">Components</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_components_hierarchy.html">Components with hierarchy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_routing.html">Routing optical and RF ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="041_routing_electical.html">Routing electrical</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Netlist driven flow (circuits)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_mask.html">Reticle assembly</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_pdk.html">PDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_pdk_import.html">Import PDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common_mistakes.html">Common mistakes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflow.html">Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components.html">Components</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../plugins_mode_solver.html">Plugins: Mode solvers</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins/mpb/001_mpb_waveguide.html">MPB mode-solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/tidy3d/01_tidy3d_modes.html">Tidy3D mode solver</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../plugins_fdtd.html">Plugins: FDTD</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins/lumerical/1_fdtd_sparameters.html">FDTD Lumerical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/meep/001_meep_sparameters.html">FDTD Meep</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/meep/002_gratings.html">FDTD Meep gratings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/tidy3d/00_tidy3d.html">FDTD tidy3d</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../plugins_circuits.html">Plugins: Circuit simulators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="plugins/sax/sax.html">SAX circuit simulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugins/simphony/01_components.html">Simphony circuit simulator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../CHANGELOG.html">CHANGELOG</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<section id="Netlist-driven-flow-(circuits)">
+<h1>Netlist driven flow (circuits)<a class="headerlink" href="#Netlist-driven-flow-(circuits)" title="Permalink to this heading">#</a></h1>
+<p>You have two options for working with gdsfactory:</p>
+<ol class="arabic simple">
+<li><p><strong>layout driven flow</strong>: you code your layout using python functions, and then extract the YAML netlist to simulate the circuit. This is the flow that you have been doing so far.</p></li>
+<li><p><strong>netlist driven flow</strong>: you define your circuit (instances, placements and routes) in YAML. From the netlist you can simulate the circuit or generate the layout.</p></li>
+</ol>
+<p>Using the netlist driven flow you can define components, circuits and masks.</p>
+<p>YAML is a more human readable version of JSON</p>
+<p>to define a Component from YAML you need to define:</p>
+<ul class="simple">
+<li><p>instances: with each instance setting</p></li>
+<li><p>placements: with X and Y</p></li>
+</ul>
+<p>And optional:</p>
+<ul class="simple">
+<li><p>routes: between instances</p></li>
+<li><p>connections: to connect components ports</p></li>
+<li><p>ports: define input and output circuit ports</p></li>
+</ul>
+<p>When running this tutorial make sure you UNCOMMENT this line <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">widget</span></code> so you can live update your changes in the YAML file</p>
+<p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">%matplotlib</span> <span class="pre">widget</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">%matplotlib</span> <span class="pre">widget</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %matplotlib widget</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ipywidgets</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">clear_output</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">Textarea</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">480</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: sample_different_factory</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    bl:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    tl:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    br:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    tr:</span>
+<span class="s2">      component: pad</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    tl:</span>
+<span class="s2">        x: 200</span>
+<span class="s2">        y: 500</span>
+
+<span class="s2">    br:</span>
+<span class="s2">        x: 400</span>
+<span class="s2">        y: 400</span>
+
+<span class="s2">    tr:</span>
+<span class="s2">        x: 400</span>
+<span class="s2">        y: 600</span>
+
+
+<span class="s2">routes:</span>
+<span class="s2">    electrical:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            separation: 20</span>
+<span class="s2">            layer: [31, 0]</span>
+<span class="s2">            width: 10</span>
+<span class="s2">        links:</span>
+<span class="s2">            tl,e3: tr,e1</span>
+<span class="s2">            bl,e3: br,e1</span>
+<span class="s2">    optical:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            radius: 100</span>
+<span class="s2">        links:</span>
+<span class="s2">            bl,e4: br,e3</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">out</span> <span class="o">=</span> <span class="n">ipywidgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">change</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">change</span><span class="p">[</span><span class="s2">&quot;new&quot;</span><span class="p">])</span>
+        <span class="c1"># clear_output()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">clear_output</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">clear_output</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">out</span><span class="p">:</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+<span class="n">x</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="p">({</span><span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2022-06-15 17:08:28.032 | INFO     | gdsfactory.config:&lt;module&gt;:52 - Load &#39;/home/runner/work/gdsfactory/gdsfactory/gdsfactory&#39; 5.10.3
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_2_3.png" src="../_images/notebooks_06_yaml_component_2_3.png" />
+</div>
+</div>
+<p>Lets start by defining the <code class="docutils literal notranslate"><span class="pre">instances</span></code> and <code class="docutils literal notranslate"><span class="pre">placements</span></code> section in YAML</p>
+<p>Lets place an <code class="docutils literal notranslate"><span class="pre">mmi_long</span></code> where you can place the <code class="docutils literal notranslate"><span class="pre">W0</span></code> port at <code class="docutils literal notranslate"><span class="pre">x=20,</span> <span class="pre">y=10</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: mmis</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 10</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: 20</span>
+<span class="s2">        y: 10</span>
+<span class="s2">        mirror: False</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_4_0.png" src="../_images/notebooks_06_yaml_component_4_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: mmi_mirror</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 10</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: 20</span>
+<span class="s2">        y: 10</span>
+<span class="s2">        mirror: False</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_5_0.png" src="../_images/notebooks_06_yaml_component_5_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<section id="ports">
+<h2>ports<a class="headerlink" href="#ports" title="Permalink to this heading">#</a></h2>
+<p>You can expose any ports of any instance to the new Component with a <code class="docutils literal notranslate"><span class="pre">ports</span></code> section in YAML</p>
+<p>Lets expose all the ports from <code class="docutils literal notranslate"><span class="pre">mmi_long</span></code> into the new component.</p>
+<p>Ports are exposed as <code class="docutils literal notranslate"><span class="pre">new_port_name:</span> <span class="pre">instance_name,</span> <span class="pre">port_name</span></code></p>
+<p>you can see the ports in <code class="docutils literal notranslate"><span class="pre">red</span></code> and subports in <code class="docutils literal notranslate"><span class="pre">blue</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+<span class="s2">placements:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: 20</span>
+<span class="s2">        y: 10</span>
+<span class="s2">        mirror: True</span>
+
+<span class="s2">ports:</span>
+<span class="s2">    o3: mmi_long,o3</span>
+<span class="s2">    o2: mmi_long,o2</span>
+<span class="s2">    o1: mmi_long,o1</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_7_0.png" src="../_images/notebooks_06_yaml_component_7_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_ff80cc58&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<p>You can also define a mirror placement using a port</p>
+<p>Try mirroring with other ports <code class="docutils literal notranslate"><span class="pre">o2</span></code>, <code class="docutils literal notranslate"><span class="pre">o3</span></code> or with a number as well as with a rotation <code class="docutils literal notranslate"><span class="pre">90</span></code>, <code class="docutils literal notranslate"><span class="pre">180</span></code>, <code class="docutils literal notranslate"><span class="pre">270</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+<span class="s2">placements:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        x: 0</span>
+<span class="s2">        y: 0</span>
+<span class="s2">        mirror: o1</span>
+<span class="s2">        rotation: 0</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_9_0.png" src="../_images/notebooks_06_yaml_component_9_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_49396694&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+</section>
+<section id="connections">
+<h2>connections<a class="headerlink" href="#connections" title="Permalink to this heading">#</a></h2>
+<p>You can connect any two instances by defining a <code class="docutils literal notranslate"><span class="pre">connections</span></code> section in the YAML file.</p>
+<p>it follows the syntax.</p>
+<p><code class="docutils literal notranslate"><span class="pre">instance_source,port</span> <span class="pre">:</span> <span class="pre">instance_destination,port</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    b:</span>
+<span class="s2">      component: bend_circular</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 10</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+<span class="s2">placements:</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: 10</span>
+<span class="s2">        y: 20</span>
+<span class="s2">connections:</span>
+<span class="s2">    b,o1 : mmi_short,o2</span>
+<span class="s2">    mmi_long,o1: b, o2</span>
+
+<span class="s2">ports:</span>
+<span class="s2">    o1: mmi_short,o1</span>
+<span class="s2">    o2: mmi_long,o2</span>
+<span class="s2">    o3: mmi_long,o3</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_11_0.png" src="../_images/notebooks_06_yaml_component_11_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_044ca791&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<p><strong>Relative port placing</strong></p>
+<p>You can also place a component with respect to another instance port</p>
+<p>You can also define an x and y offset with <code class="docutils literal notranslate"><span class="pre">dx</span></code> and <code class="docutils literal notranslate"><span class="pre">dy</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 10</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: 0</span>
+<span class="s2">        y: 0</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        port: o1</span>
+<span class="s2">        x: mmi_short,o2</span>
+<span class="s2">        y: mmi_short,o2</span>
+<span class="s2">        dx : 10</span>
+<span class="s2">        dy: -10</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_13_0.png" src="../_images/notebooks_06_yaml_component_13_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_2c2e495d&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+</section>
+<section id="routes">
+<h2>routes<a class="headerlink" href="#routes" title="Permalink to this heading">#</a></h2>
+<p>You can define routes between two instanes by defining a <code class="docutils literal notranslate"><span class="pre">routes</span></code> section in YAML</p>
+<p>it follows the syntax</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">routes</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">route_name</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">links</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="l l-Scalar l-Scalar-Plain">instance_source,port</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">instance_destination,port</span><span class="w"></span>
+<span class="w">        </span><span class="nt">settings</span><span class="p">:</span><span class="w">  </span><span class="c1"># for the route (optional)</span><span class="w"></span>
+<span class="w">            </span><span class="nt">waveguide</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">strip</span><span class="w"></span>
+<span class="w">            </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 10</span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+<span class="s2">placements:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">        x: 100</span>
+<span class="s2">        y: 100</span>
+<span class="s2">routes:</span>
+<span class="s2">    optical:</span>
+<span class="s2">        links:</span>
+<span class="s2">            mmi_short,o2: mmi_long,o1</span>
+<span class="s2">        settings:</span>
+<span class="s2">            cross_section:</span>
+<span class="s2">                cross_section: strip</span>
+<span class="s2">                settings:</span>
+<span class="s2">                    layer: [2, 0]</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_15_0.png" src="../_images/notebooks_06_yaml_component_15_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_728519ea&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<p>You can <strong>rotate</strong> and instance specifying the angle in degrees</p>
+<p>You can also access the routes in the newly created component</p>
+</section>
+<section id="instances,-placements,-connections,-ports,-routes">
+<h2>instances, placements, connections, ports, routes<a class="headerlink" href="#instances,-placements,-connections,-ports,-routes" title="Permalink to this heading">#</a></h2>
+<p>Lets combine all you learned so far.</p>
+<p>You can define the netlist connections of a component by a netlist in YAML format</p>
+<p>Note that you define the connections as <code class="docutils literal notranslate"><span class="pre">instance_source.port</span> <span class="pre">-&gt;</span> <span class="pre">instance_destination.port</span></code> so the order is important and therefore you can only change the position of the <code class="docutils literal notranslate"><span class="pre">instance_destination</span></code></p>
+<p>You can define several routes that will be connected using <code class="docutils literal notranslate"><span class="pre">gf.routing.get_bundle</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name:</span>
+<span class="s2">    connections_2x2_problem</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    mmi_bottom:</span>
+<span class="s2">      component: mmi2x2</span>
+<span class="s2">    mmi_top:</span>
+<span class="s2">      component: mmi2x2</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    mmi_top:</span>
+<span class="s2">        x: 100</span>
+<span class="s2">        y: 100</span>
+
+<span class="s2">routes:</span>
+<span class="s2">    optical:</span>
+<span class="s2">        links:</span>
+<span class="s2">            mmi_bottom,o4: mmi_top,o1</span>
+<span class="s2">            mmi_bottom,o3: mmi_top,o2</span>
+
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_20_0.png" src="../_images/notebooks_06_yaml_component_20_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<p>You can also add custom component_factories to <code class="docutils literal notranslate"><span class="pre">gf.read.from_yaml</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@gf</span><span class="o">.</span><span class="n">cell</span>
+<span class="k">def</span> <span class="nf">pad_new</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">layer</span><span class="o">=</span><span class="n">gf</span><span class="o">.</span><span class="n">LAYER</span><span class="o">.</span><span class="n">WG</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">Component</span><span class="p">()</span>
+    <span class="n">compass</span> <span class="o">=</span> <span class="n">c</span> <span class="o">&lt;&lt;</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">compass</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">layer</span><span class="o">=</span><span class="n">layer</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">ports</span> <span class="o">=</span> <span class="n">compass</span><span class="o">.</span><span class="n">ports</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+
+<span class="n">gf</span><span class="o">.</span><span class="n">get_active_pdk</span><span class="p">()</span><span class="o">.</span><span class="n">register_cells</span><span class="p">(</span><span class="n">pad_new</span><span class="o">=</span><span class="n">pad_new</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">pad_new</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_22_0.png" src="../_images/notebooks_06_yaml_component_22_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name:</span>
+<span class="s2">    connections_2x2_problem</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    bot:</span>
+<span class="s2">      component: pad_new</span>
+<span class="s2">    top:</span>
+<span class="s2">      component: pad_new</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    top:</span>
+<span class="s2">        x: 0</span>
+<span class="s2">        y: 200</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_23_0.png" src="../_images/notebooks_06_yaml_component_23_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: custom_routes</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    t:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 270</span>
+<span class="s2">          columns: 3</span>
+<span class="s2">    b:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 90</span>
+<span class="s2">          columns: 3</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    t:</span>
+<span class="s2">        x: 200</span>
+<span class="s2">        y: 400</span>
+<span class="s2">routes:</span>
+<span class="s2">    electrical:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            layer: [31, 0]</span>
+<span class="s2">            width: 10.</span>
+<span class="s2">            end_straight_length: 150</span>
+<span class="s2">        links:</span>
+<span class="s2">            t,e11: b,e11</span>
+<span class="s2">            t,e13: b,e13</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_24_2.png" src="../_images/notebooks_06_yaml_component_24_2.png" />
+</div>
+</div>
+<p>Also, you can define route aliases, that have different settings and specify the route <code class="docutils literal notranslate"><span class="pre">factory</span></code> as a parameter as well as the <code class="docutils literal notranslate"><span class="pre">settings</span></code> for that particular route alias.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: sample_settings</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    bl:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    tl:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    br:</span>
+<span class="s2">      component: pad</span>
+<span class="s2">    tr:</span>
+<span class="s2">      component: pad</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    tl:</span>
+<span class="s2">        x: 0</span>
+<span class="s2">        y: 200</span>
+
+<span class="s2">    br:</span>
+<span class="s2">        x: 400</span>
+<span class="s2">        y: 400</span>
+
+<span class="s2">    tr:</span>
+<span class="s2">        x: 400</span>
+<span class="s2">        y: 600</span>
+
+<span class="s2">routes:</span>
+<span class="s2">    optical_r100:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            radius: 100</span>
+<span class="s2">            layer: [31, 0]</span>
+<span class="s2">            width: 50</span>
+<span class="s2">        links:</span>
+<span class="s2">            tl,e2: tr,e2</span>
+<span class="s2">    optical_r200:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            radius: 200</span>
+<span class="s2">            width: 10</span>
+<span class="s2">            layer: [31, 0]</span>
+<span class="s2">        links:</span>
+<span class="s2">            bl,e3: br,e3</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_26_2.png" src="../_images/notebooks_06_yaml_component_26_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    t:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 270</span>
+<span class="s2">          columns: 3</span>
+<span class="s2">    b:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 90</span>
+<span class="s2">          columns: 3</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    t:</span>
+<span class="s2">        x: 200</span>
+<span class="s2">        y: 500</span>
+<span class="s2">routes:</span>
+<span class="s2">    optical:</span>
+<span class="s2">        settings:</span>
+<span class="s2">            radius: 50</span>
+<span class="s2">            width: 40</span>
+<span class="s2">            layer: [31,0]</span>
+<span class="s2">            end_straight_length: 150</span>
+<span class="s2">            separation: 50</span>
+<span class="s2">        links:</span>
+<span class="s2">            t,e11: b,e11</span>
+<span class="s2">            t,e12: b,e12</span>
+<span class="s2">            t,e13: b,e13</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_27_2.png" src="../_images/notebooks_06_yaml_component_27_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    t:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 270</span>
+<span class="s2">          columns: 3</span>
+<span class="s2">    b:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 90</span>
+<span class="s2">          columns: 3</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    t:</span>
+<span class="s2">        x: 100</span>
+<span class="s2">        y: 1000</span>
+<span class="s2">routes:</span>
+<span class="s2">    route1:</span>
+<span class="s2">        routing_strategy: get_bundle_path_length_match</span>
+<span class="s2">        settings:</span>
+<span class="s2">            extra_length: 500</span>
+<span class="s2">            width: 2</span>
+<span class="s2">            layer: [31,0]</span>
+<span class="s2">            end_straight_length: 500</span>
+<span class="s2">        links:</span>
+<span class="s2">            t,e11: b,e11</span>
+<span class="s2">            t,e12: b,e12</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_28_2.png" src="../_images/notebooks_06_yaml_component_28_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">instances:</span>
+<span class="s2">    t:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 270</span>
+<span class="s2">          columns: 3</span>
+<span class="s2">    b:</span>
+<span class="s2">      component: pad_array</span>
+<span class="s2">      settings:</span>
+<span class="s2">          orientation: 90</span>
+<span class="s2">          columns: 3</span>
+
+<span class="s2">placements:</span>
+<span class="s2">    t:</span>
+<span class="s2">        x: -250</span>
+<span class="s2">        y: 1000</span>
+<span class="s2">routes:</span>
+<span class="s2">    route1:</span>
+<span class="s2">        routing_strategy: get_bundle_from_waypoints</span>
+<span class="s2">        settings:</span>
+<span class="s2">            waypoints:</span>
+<span class="s2">                - [0, 300]</span>
+<span class="s2">                - [400, 300]</span>
+<span class="s2">                - [400, 400]</span>
+<span class="s2">                - [-250, 400]</span>
+<span class="s2">            auto_widen: False</span>
+<span class="s2">        links:</span>
+<span class="s2">            b,e11: t,e11</span>
+<span class="s2">            b,e12: t,e12</span>
+
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_29_0.png" src="../_images/notebooks_06_yaml_component_29_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_75b44ce9&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<p>Note that you define the connections as <code class="docutils literal notranslate"><span class="pre">instance_source.port</span> <span class="pre">-&gt;</span> <span class="pre">instance_destination.port</span></code> so the order is important and therefore you can only change the position of the <code class="docutils literal notranslate"><span class="pre">instance_destination</span></code></p>
+</section>
+<section id="Custom-factories">
+<h2>Custom factories<a class="headerlink" href="#Custom-factories" title="Permalink to this heading">#</a></h2>
+<p>You can leverage netlist defined components to define more complex circuits</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mmi1x2_faba</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mmi1x2</span><span class="p">,</span> <span class="n">length_mmi</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">mmi2x2_faba</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mmi2x2</span><span class="p">,</span> <span class="n">length_mmi</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">gf</span><span class="o">.</span><span class="n">get_active_pdk</span><span class="p">()</span><span class="o">.</span><span class="n">register_cells</span><span class="p">(</span><span class="n">mmi1x2_faba</span><span class="o">=</span><span class="n">mmi1x2_faba</span><span class="p">,</span> <span class="n">mmi2x2_faba</span><span class="o">=</span><span class="n">mmi2x2_faba</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: sample_custom_cells</span>
+<span class="s2">instances:</span>
+<span class="s2">    mmit:</span>
+<span class="s2">      component: mmi2x2_faba</span>
+<span class="s2">    mmib:</span>
+<span class="s2">      component: mmi1x2_faba</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">placements:</span>
+<span class="s2">    mmit:</span>
+<span class="s2">        x: 100</span>
+<span class="s2">        y: 100</span>
+<span class="s2">routes:</span>
+<span class="s2">    route1:</span>
+<span class="s2">        links:</span>
+<span class="s2">            mmib,o2: mmit,o2</span>
+
+<span class="s2">ports:</span>
+<span class="s2">    o1: mmib,o1</span>
+<span class="s2">    o2: mmit,o2</span>
+<span class="s2">    o3: mmit,o3</span>
+<span class="s2">    o4: mmit,o4</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_32_0.png" src="../_images/notebooks_06_yaml_component_32_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_33_0.png" src="../_images/notebooks_06_yaml_component_33_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi: uid 149, ports ['o1', 'o2'], aliases [], 0 polygons, 20 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f833093c6d0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_34_1.png" src="../_images/notebooks_06_yaml_component_34_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_netlist_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;connections&#39;, &#39;instances&#39;, &#39;placements&#39;, &#39;ports&#39;, &#39;name&#39;])
+</pre></div></div>
+</div>
+</section>
+<section id="variables">
+<h2>variables<a class="headerlink" href="#variables" title="Permalink to this heading">#</a></h2>
+<p>You can define a global variables <code class="docutils literal notranslate"><span class="pre">settings</span></code> in your YAML file, and use the variable in the other YAML settings by using <code class="docutils literal notranslate"><span class="pre">${settings.length_mmi}</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">settings:</span>
+<span class="s2">    length_mmi: 10</span>
+
+<span class="s2">instances:</span>
+<span class="s2">    mmi_long:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: $</span><span class="si">{settings.length_mmi}</span><span class="s2"></span>
+<span class="s2">    mmi_short:</span>
+<span class="s2">      component: mmi1x2</span>
+<span class="s2">      settings:</span>
+<span class="s2">        width_mmi: 4.5</span>
+<span class="s2">        length_mmi: 5</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_38_0.png" src="../_images/notebooks_06_yaml_component_38_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/gdsfactory/gdsfactory/gdsfactory/component.py:1032: UserWarning: Component &#39;Unnamed_d74be02d&#39; contains 1 Unnamed cells
+  warnings.warn(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f6e6c99fdffa4233ac1f8048e9520cb5"}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d3e891b85249403f8ed7b599fdfe7eb4"}</script></div>
+</div>
+</section>
+<section id="get_netlist-(Component--&gt;-YAML)">
+<h2>get_netlist (Component -&gt; YAML)<a class="headerlink" href="#get_netlist-(Component-->-YAML)" title="Permalink to this heading">#</a></h2>
+<p>Any component exports its netlist <code class="docutils literal notranslate"><span class="pre">get_netlist</span></code> and returns an <code class="docutils literal notranslate"><span class="pre">OmegaConf</span></code> dict that can be easily converted into JSON and YAML.</p>
+<p>While <code class="docutils literal notranslate"><span class="pre">component_from_yaml</span></code> converts YAML -&gt; Component</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_netlist</span></code> converts Component -&gt; YAML</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
+<span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">ring_single</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_41_0.png" src="../_images/notebooks_06_yaml_component_41_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+ring_single: uid 164, ports ['o2', 'o1'], aliases [], 0 polygons, 6 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f8330b69f40&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_42_1.png" src="../_images/notebooks_06_yaml_component_42_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">netlist</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">netlist</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">write_netlist</span><span class="p">(</span><span class="s2">&quot;ring.yml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;ring.yml&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="s2">&quot;instances&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">i</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;bend_euler_radius10_5p124_16p425&#39;,
+ &#39;bend_euler_radius10_m9p124_16p425&#39;,
+ &#39;coupler_ring_3363c15c_m2p0_5p226&#39;,
+ &#39;straight_length0p6_10p0_11p0&#39;,
+ &#39;straight_length0p6_m14p0_11p0&#39;,
+ &#39;straight_length4_m2p0_21p3&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">instance_name0</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="p">[</span><span class="s2">&quot;instances&quot;</span><span class="p">][</span><span class="n">instance_name0</span><span class="p">][</span><span class="s2">&quot;settings&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;radius&#39;: 10}
+</pre></div></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">OmegaConf</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="n">c1</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="s1">&#39;ring.yml&#39;</span><span class="p">)</span>
+<span class="n">c1</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">(</span><span class="n">full_settings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">connections</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="s1">&#39;connections&#39;</span><span class="p">]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">connections</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="Plot-netlist">
+<h2>Plot netlist<a class="headerlink" href="#Plot-netlist" title="Permalink to this heading">#</a></h2>
+<p>You can plot the netlist of components.</p>
+<p>Every gdsfactory component can either be defined by its netlist or using layout friendly functions such as component sequence to define it and then <code class="docutils literal notranslate"><span class="pre">get_netlist()</span></code> method.</p>
+<p>Connections are determined by extracting all the ports of a component, and asuming that ports with the same (x, y) are connected.</p>
+<p>When you do <code class="docutils literal notranslate"><span class="pre">get_netlist()</span></code> for a component it will only show connections for the instances that belong to that component (it trims the netlist). So despite having  a lot of connections, it will show only the meaningful connections for that component. For example, a ring has a ring_coupler. but if you want to digg deeper, the connections that made that ring coupler are still available.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_54_0.png" src="../_images/notebooks_06_yaml_component_54_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi: uid 149, ports ['o1', 'o2'], aliases [], 0 polygons, 20 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi</span><span class="p">()</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_netlist_dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;connections&#39;, &#39;instances&#39;, &#39;placements&#39;, &#39;ports&#39;, &#39;name&#39;])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f832d0f8d60&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_56_1.png" src="../_images/notebooks_06_yaml_component_56_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_keys([&#39;connections&#39;, &#39;instances&#39;, &#39;placements&#39;, &#39;ports&#39;, &#39;name&#39;])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+
+<span class="n">yaml</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">name: mmi_with_bend</span>
+<span class="s2">instances:</span>
+
+<span class="s2">    mmi1x2_12_0:</span>
+<span class="s2">        component: mmi1x2</span>
+
+<span class="s2">    bend_circular_R10p00_32_4:</span>
+<span class="s2">      component: bend_circular</span>
+
+<span class="s2">    straight_L1p00_35_11:</span>
+<span class="s2">        component: straight</span>
+<span class="s2">        settings:</span>
+<span class="s2">            length: 10</span>
+<span class="s2">            layer: [2, 0]</span>
+
+<span class="s2">connections:</span>
+<span class="s2">    bend_circular_R10p00_32_4,o1: mmi1x2_12_0,o2</span>
+<span class="s2">    straight_L1p00_35_11,o1: bend_circular_R10p00_32_4,o2</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
+<span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;mmi_with_bend_circular&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+mmi_with_bend_circular
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_58_1.png" src="../_images/notebooks_06_yaml_component_58_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mmi_with_bend_circular: uid 175, ports [], aliases [], 0 polygons, 3 references</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_netlist_yaml</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+connections:
+  bend_circular_R10p00_32_4,o1: mmi1x2_12_0,o2
+  bend_circular_R10p00_32_4,o2: straight_L1p00_35_11,o1
+instances:
+  bend_circular_R10p00_32_4:
+    component: bend_circular
+    info:
+      length: 15.708
+      dy: 10
+      radius: 10
+    settings: {}
+  mmi1x2_12_0:
+    component: mmi1x2
+    settings: {}
+  straight_L1p00_35_11:
+    component: straight
+    info:
+      length: 10
+      width: 0.5
+    settings:
+      layer:
+      - 2
+      - 0
+placements:
+  bend_circular_R10p00_32_4:
+    x: 15.5
+    &#39;y&#39;: 0.625
+    rotation: 0
+    mirror: false
+  mmi1x2_12_0:
+    x: 0.0
+    &#39;y&#39;: 0.0
+    rotation: 0
+    mirror: false
+  straight_L1p00_35_11:
+    x: 25.5
+    &#39;y&#39;: 10.625
+    rotation: 90
+    mirror: false
+ports: {}
+name: mmi_with_bend_circular
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span><span class="p">[</span><span class="s2">&quot;connections&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;bend_circular_R10p00_32_4,o1&#39;: &#39;mmi1x2_12_0,o2&#39;, &#39;bend_circular_R10p00_32_4,o2&#39;: &#39;straight_L1p00_35_11,o1&#39;}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f832d064220&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_62_1.png" src="../_images/notebooks_06_yaml_component_62_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_63_0.png" src="../_images/notebooks_06_yaml_component_63_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi: uid 149, ports ['o1', 'o2'], aliases [], 0 polygons, 20 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f832d216ca0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_64_1.png" src="../_images/notebooks_06_yaml_component_64_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">ring_single</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_65_0.png" src="../_images/notebooks_06_yaml_component_65_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+ring_single: uid 164, ports ['o2', 'o1'], aliases [], 0 polygons, 6 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[47]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f8330eef430&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_66_1.png" src="../_images/notebooks_06_yaml_component_66_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">ring_double</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_67_0.png" src="../_images/notebooks_06_yaml_component_67_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[48]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+ring_double: uid 184, ports ['o1', 'o2', 'o3', 'o4'], aliases [], 0 polygons, 4 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f8330925a60&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_68_1.png" src="../_images/notebooks_06_yaml_component_68_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">ring_single</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_69_0.png" src="../_images/notebooks_06_yaml_component_69_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+ring_single: uid 164, ports ['o2', 'o1'], aliases [], 0 polygons, 6 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f8330ed7c70&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_70_1.png" src="../_images/notebooks_06_yaml_component_70_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">ring_double</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_71_0.png" src="../_images/notebooks_06_yaml_component_71_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+ring_double: uid 184, ports ['o1', 'o2', 'o3', 'o4'], aliases [], 0 polygons, 4 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f832d212d90&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_72_1.png" src="../_images/notebooks_06_yaml_component_72_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[54]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_netlist_yaml</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+connections:
+  coupler_ring_036cdf83_m0p005_16p184,o2: straight_08352659_10p0_10p705,o2
+  coupler_ring_036cdf83_m0p005_16p184,o3: straight_08352659_m10p01_10p705,o2
+  coupler_ring_036cdf83_m0p005_5p226,o2: straight_08352659_m10p01_10p705,o1
+  coupler_ring_036cdf83_m0p005_5p226,o3: straight_08352659_10p0_10p705,o1
+instances:
+  coupler_ring_036cdf83_m0p005_16p184:
+    component: coupler_ring
+    settings:
+      cross_section:
+        function: cross_section
+        settings:
+          add_pins:
+            function: add_pins_siepic
+            settings:
+              pin_length: 0.002
+          add_bbox:
+            function: add_bbox_siepic
+          cladding_layers:
+          - DEVREC
+          cladding_offsets:
+          - 0
+      length_x: 0.01
+      radius: 10
+  coupler_ring_036cdf83_m0p005_5p226:
+    component: coupler_ring
+    settings:
+      cross_section:
+        function: cross_section
+        settings:
+          add_pins:
+            function: add_pins_siepic
+            settings:
+              pin_length: 0.002
+          add_bbox:
+            function: add_bbox_siepic
+          cladding_layers:
+          - DEVREC
+          cladding_offsets:
+          - 0
+      length_x: 0.01
+      radius: 10
+  straight_08352659_10p0_10p705:
+    component: straight
+    info:
+      length: 0.01
+      width: 0.5
+    settings:
+      cross_section:
+        function: cross_section
+        settings:
+          add_pins:
+            function: add_pins_siepic
+            settings:
+              pin_length: 0.002
+          add_bbox:
+            function: add_bbox_siepic
+          cladding_layers:
+          - DEVREC
+          cladding_offsets:
+          - 0
+      length: 0.01
+  straight_08352659_m10p01_10p705:
+    component: straight
+    info:
+      length: 0.01
+      width: 0.5
+    settings:
+      cross_section:
+        function: cross_section
+        settings:
+          add_pins:
+            function: add_pins_siepic
+            settings:
+              pin_length: 0.002
+          add_bbox:
+            function: add_bbox_siepic
+          cladding_layers:
+          - DEVREC
+          cladding_offsets:
+          - 0
+      length: 0.01
+placements:
+  coupler_ring_036cdf83_m0p005_16p184:
+    x: -0.01
+    &#39;y&#39;: 21.41
+    rotation: 180
+    mirror: false
+  coupler_ring_036cdf83_m0p005_5p226:
+    x: 0.0
+    &#39;y&#39;: 0.0
+    rotation: 0
+    mirror: false
+  straight_08352659_10p0_10p705:
+    x: 10.0
+    &#39;y&#39;: 10.7
+    rotation: 90
+    mirror: false
+  straight_08352659_m10p01_10p705:
+    x: -10.01
+    &#39;y&#39;: 10.7
+    rotation: 90
+    mirror: false
+ports:
+  o1: coupler_ring_036cdf83_m0p005_5p226,o1
+  o2: coupler_ring_036cdf83_m0p005_5p226,o4
+  o3: coupler_ring_036cdf83_m0p005_16p184,o4
+  o4: coupler_ring_036cdf83_m0p005_16p184,o1
+name: ring_double
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_74_0.png" src="../_images/notebooks_06_yaml_component_74_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi: uid 149, ports ['o1', 'o2'], aliases [], 0 polygons, 20 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[56]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f8330ed8b50&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_75_1.png" src="../_images/notebooks_06_yaml_component_75_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzit</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_76_0.png" src="../_images/notebooks_06_yaml_component_76_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[57]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzit: uid 185, ports ['o4', 'o3', 'o2', 'o1'], aliases [], 0 polygons, 17 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[58]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f832d2efbb0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_77_1.png" src="../_images/notebooks_06_yaml_component_77_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi_lattice</span><span class="p">()</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_78_0.png" src="../_images/notebooks_06_yaml_component_78_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[59]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi_lattice: uid 218, ports ['o1', 'o2', 'o3', 'o4'], aliases [], 0 polygons, 1 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gdsfactory</span> <span class="k">as</span> <span class="nn">gf</span>
+
+<span class="n">coupler_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+<span class="n">coupler_gaps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+<span class="n">delta_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi_lattice</span><span class="p">(</span>
+    <span class="n">coupler_lengths</span><span class="o">=</span><span class="n">coupler_lengths</span><span class="p">,</span>
+    <span class="n">coupler_gaps</span><span class="o">=</span><span class="n">coupler_gaps</span><span class="p">,</span>
+    <span class="n">delta_lengths</span><span class="o">=</span><span class="n">delta_lengths</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_79_0.png" src="../_images/notebooks_06_yaml_component_79_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[60]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi_lattice_3b4b99d8: uid 236, ports ['o1', 'o2', 'o3', 'o4'], aliases [], 0 polygons, 2 references</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[61]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_netlist_yaml</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+connections:
+  mzi_289aeb03_145p302_m24p65,o1: mzi_bd4fca60_45p1_m2p2,o4
+  mzi_289aeb03_145p302_m24p65,o2: mzi_bd4fca60_45p1_m2p2,o3
+instances:
+  mzi_289aeb03_145p302_m24p65:
+    component: mzi
+    settings:
+      combiner:
+        name: coupler_gap0p3_length30
+        version: 0.0.1
+        settings:
+          name: coupler_gap0p3_length30
+          module: gdsfactory.components.coupler
+          function_name: coupler
+          info:
+            length: 10.305
+            min_bend_radius: 9.568
+          info_version: 2
+          full:
+            gap: 0.3
+            length: 30
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          changed:
+            gap: 0.3
+            length: 30
+          default:
+            gap: 0.236
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          child: null
+      delta_length: 100
+      port_e0_combiner: o4
+      port_e0_splitter: o4
+      port_e1_combiner: o3
+      port_e1_splitter: o3
+      splitter:
+        name: coupler_gap0p2
+        version: 0.0.1
+        settings:
+          name: coupler_gap0p2
+          module: gdsfactory.components.coupler
+          function_name: coupler
+          info:
+            length: 10.319
+            min_bend_radius: 9.387
+          info_version: 2
+          full:
+            gap: 0.2
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          changed:
+            gap: 0.2
+          default:
+            gap: 0.236
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          child: null
+      with_splitter: false
+  mzi_bd4fca60_45p1_m2p2:
+    component: mzi
+    settings:
+      combiner:
+        name: coupler_gap0p2
+        version: 0.0.1
+        settings:
+          name: coupler_gap0p2
+          module: gdsfactory.components.coupler
+          function_name: coupler
+          info:
+            length: 10.319
+            min_bend_radius: 9.387
+          info_version: 2
+          full:
+            gap: 0.2
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          changed:
+            gap: 0.2
+          default:
+            gap: 0.236
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          child: null
+      port_e0_combiner: o4
+      port_e0_splitter: o4
+      port_e1_combiner: o3
+      port_e1_splitter: o3
+      splitter:
+        name: coupler_gap0p1_length10
+        version: 0.0.1
+        settings:
+          name: coupler_gap0p1_length10
+          module: gdsfactory.components.coupler
+          function_name: coupler
+          info:
+            length: 10.334
+            min_bend_radius: 9.213
+          info_version: 2
+          full:
+            gap: 0.1
+            length: 10
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          changed:
+            gap: 0.1
+            length: 10
+          default:
+            gap: 0.236
+            length: 20
+            coupler_symmetric:
+              function: coupler_symmetric
+            coupler_straight:
+              function: coupler_straight
+            dy: 5
+            dx: 10
+            cross_section: strip
+          child: null
+placements:
+  mzi_289aeb03_145p302_m24p65:
+    x: 70.201
+    &#39;y&#39;: 0.0
+    rotation: 0
+    mirror: false
+  mzi_bd4fca60_45p1_m2p2:
+    x: 0.0
+    &#39;y&#39;: 0.0
+    rotation: 0
+    mirror: false
+ports:
+  o1: mzi_bd4fca60_45p1_m2p2,o1
+  o2: mzi_bd4fca60_45p1_m2p2,o2
+  o3: mzi_289aeb03_145p302_m24p65,o3
+  o4: mzi_289aeb03_145p302_m24p65,o4
+name: mzi_lattice_3b4b99d8
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f83309dd310&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_81_1.png" src="../_images/notebooks_06_yaml_component_81_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coupler_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+<span class="n">coupler_gaps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>
+<span class="n">delta_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">gf</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">mzi_lattice</span><span class="p">(</span>
+    <span class="n">coupler_lengths</span><span class="o">=</span><span class="n">coupler_lengths</span><span class="p">,</span>
+    <span class="n">coupler_gaps</span><span class="o">=</span><span class="n">coupler_gaps</span><span class="p">,</span>
+    <span class="n">delta_lengths</span><span class="o">=</span><span class="n">delta_lengths</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">c</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_82_0.png" src="../_images/notebooks_06_yaml_component_82_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+mzi_lattice_d52c1fad: uid 255, ports ['o1', 'o2', 'o3', 'o4'], aliases [], 0 polygons, 3 references</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[64]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">c</span><span class="o">.</span><span class="n">plot_netlist</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[65]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;networkx.classes.graph.Graph at 0x7f83305ae640&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_06_yaml_component_84_1.png" src="../_images/notebooks_06_yaml_component_84_1.png" />
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"c3433a5510574f89a692a35c55849e99": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e3582bd76aa2475e92fceec01d6abce8": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "f6e6c99fdffa4233ac1f8048e9520cb5": {"model_name": "TextareaModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "TextareaModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "TextareaView", "continuous_update": true, "description": "", "description_tooltip": null, "disabled": false, "layout": "IPY_MODEL_c3433a5510574f89a692a35c55849e99", "placeholder": "\u200b", "rows": 20, "style": "IPY_MODEL_e3582bd76aa2475e92fceec01d6abce8", "value": "\nsettings:\n    length_mmi: 10\n\ninstances:\n    mmi_long:\n      component: mmi1x2\n      settings:\n        width_mmi: 4.5\n        length_mmi: ${settings.length_mmi}\n    mmi_short:\n      component: mmi1x2\n      settings:\n        width_mmi: 4.5\n        length_mmi: 5\n"}}, "35f2e233f0214a8193400e4775109b2f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d3e891b85249403f8ed7b599fdfe7eb4": {"model_name": "OutputModel", "model_module": "@jupyter-widgets/output", "model_module_version": "1.0.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/output", "_model_module_version": "1.0.0", "_model_name": "OutputModel", "_view_count": null, "_view_module": "@jupyter-widgets/output", "_view_module_version": "1.0.0", "_view_name": "OutputView", "layout": "IPY_MODEL_35f2e233f0214a8193400e4775109b2f", "msg_id": "", "outputs": []}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="07_mask.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Reticle assembly</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="041_routing_electical.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Routing electrical</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2019, PsiQ
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Netlist driven flow (circuits)</a><ul>
+<li><a class="reference internal" href="#ports">ports</a></li>
+<li><a class="reference internal" href="#connections">connections</a></li>
+<li><a class="reference internal" href="#routes">routes</a></li>
+<li><a class="reference internal" href="#instances,-placements,-connections,-ports,-routes">instances, placements, connections, ports, routes</a></li>
+<li><a class="reference internal" href="#Custom-factories">Custom factories</a></li>
+<li><a class="reference internal" href="#variables">variables</a></li>
+<li><a class="reference internal" href="#get_netlist-(Component--&gt;-YAML)">get_netlist (Component -&gt; YAML)</a></li>
+<li><a class="reference internal" href="#Plot-netlist">Plot netlist</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>
